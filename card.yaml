@@ -1,0 +1,162 @@
+type: markdown
+content: |
+  {% set ta  = states('sensor.octoprint_tool_0_temperature')|float(0) %}
+  {% set tt = states('sensor.octoprint_tool_0_target')|float(0) %}
+  {% set b  = states('sensor.octoprint_bed_temperature')|float(0) %}
+  {% set bt = states('sensor.octoprint_bed_target')|float(0) %}
+  {% set p  = states('sensor.octoprint_print_progress')|int(0) %}
+  {% set name = states('sensor.octoprint_print_file')|default('', true) %}
+  {% set msg  = states('sensor.octoprint_display_message')|default('', true) %}
+  {% set fan = states('sensor.octoprint_fan_speed')|int(100) %}
+  {% set secs = states('sensor.octoprint_time_remaining')|int(0) %} 
+  {% set t = secs | int %} 
+  {% set h = (t // 3600) %} 
+  {% set m = (t % 3600) // 60 %} 
+  {% set s = t % 60 %} 
+  {% set rem = "%02d:%02d:%02d" | format(h, m, s) %} 
+
+  <table>
+    <thead></thead>
+    <tbody>
+      <tr>
+        <td>
+        </td>
+        <td>{{ta|round(0)}}°</td>
+        <td>{{b|round(0)}}°</td>
+        <td rowspan="2"><img src="/local/img/fan_bluebg.svg"/></td>
+      </tr>
+      <tr>
+        <td>Ender-3 Pro</td>
+        <td><img src="/local/img/hotend.svg"/></td>
+        <td><img src="/local/img/bed.svg"/></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>{{tt|round(0)}}°</td>
+        <td>{{bt|round(0)}}°</td>
+        <td>{{fan}}%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <p>{{name}}&nbsp;</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead></thead>
+    <tbody>
+      <tr>
+        <td alt="percentage"> >> {{ p }}%</td> 
+        <td>
+          <table>
+            <thead></thead>
+            <tbody>
+              <tr>
+                <td>E:</td>
+                <td align='right'>{{rem}}</td>
+              </tr>
+              <tr>
+                <td colspan="2" class="right">
+                  <div class="progress">&nbsp;</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <table>
+    <tbody>
+      <tr>
+        <td>{{ msg|truncate(200, True, '') }}</td>
+      </tr>
+    </tbody>
+  </table>
+card_mod:
+  style:
+    .: |
+      ha-card {
+        background-color: #0000FF !important;
+        color: white !important;
+        font-family: monospace, "Courier New", Courier, Consolas;
+        font-size: 12pt;  
+      } 
+    ha-markdown:
+      $: >
+        * {
+          margin: 0px;
+        }
+
+
+        div {
+          height: 10px !important;
+          background-color: white !important;
+          width: {{ [0, [100, states('sensor.octoprint_print_progress')|int(0)]|min]|max }}%;
+        }
+
+
+        ha-markdown-element:nth-child(1) > table:nth-child(3) >
+
+        tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(2) >
+
+        table:nth-child(1) > tbody:nth-child(2) > tr:nth-child(2) >
+
+        td:nth-child(1) { 
+          border:1px solid white; padding:3px; 
+        }
+
+        ha-markdown-element:nth-child(1) > table:nth-child(1) > td {
+          vertical-align: middle;
+          text-align: center !important;
+        }
+
+        img { 
+          display: block;
+          padding: 0px 4px; 
+          margin: -4px auto; 
+          height: 50px !important; 
+          width: 50px !important;
+          text-align: center !importatnt;
+        }  
+
+
+        ha-markdown-element:nth-child(1) > table:nth-child(1) >
+        tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(4) >
+        img:nth-child(1) {
+          width: 60px !important;
+          height: 60px !important;
+          vertical-align: bottom;
+          display: table-cell;
+          padding: 0 !important;
+          margin-bottom: -20px !important;
+          text-align: center;
+        }
+
+        table {
+          width: 100% !important;
+        } 
+
+
+        ha-markdown-element:nth-child(1) > table:nth-child(1) td {
+          text-align: center !important;
+        }
+
+
+        table:nth-child(1) tr:nth-child(2) td:nth-child(1) {
+          width: 80px;
+        }
+            
+        p {
+          border: 1px solid white;
+          padding: 0px 4px;
+        }
