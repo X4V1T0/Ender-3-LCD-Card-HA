@@ -13,8 +13,17 @@ It’s not a custom card, but a quick hack combining:
 - Displays:
   - Print progress
   - Print file name (instead of X/Y/Z positions)
-  - Fan percentage (via custom OctoPrint plugin → MQTT)
-  - Status message (via OctoPrint [MQTT Publish](https://plugins.octoprint.org/plugins/mqtt-publish/))  
+  - Fan percentage (via custom OctoPrint plugin → [Fan2Mqtt](https://github.com/X4V1T0/Octoprint-Fan2Mqtt/blob/main/README.md))
+  - Status message (via OctoPrint [MQTT Publish](https://plugins.octoprint.org/plugins/mqtt-publish/))
+    - Activate "octoPrint/m117" in the plugin settings
+    - Set "octoPrint/m117" in the M117 Topic field
+    - Create a mqtt sensor in Home Assistant:
+      ```yaml
+      mqtt:
+        sensor:
+          - name: "OctoPrint Display Message"
+            state_topic: "octoPrint/m117"
+      ```
 - Easy to adapt for your own sensors or entities  
 
 ## How it works
